@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         IMAGE = 'ghcr.io/hugogapaillart/courscicd'
-        VERSION = '1.0.${BUILD_ID}'
+        VERSION = 'build-${env.BUILD_NUMBER}'
     }
 
     stages { 
