@@ -44,6 +44,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'gitToken', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
                     sh """
                         echo $GH_TOKEN | docker login ghcr.io -u $GH_USER --password-stdin
+                        docker images ${IMAGE}:${VERSION}
                         docker push ${IMAGE}:${VERSION}
                     """
                 }
