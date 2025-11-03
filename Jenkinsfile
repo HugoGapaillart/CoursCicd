@@ -6,7 +6,10 @@ pipeline {
     }
 
     environment {
-        IMAGE = 'ghcr.io/hugogapaillart/courscicd'
+        REGISTRY = 'ghcr.io'
+        REPO_OWNER = 'hugogapaillart'
+        REPO_NAME = 'courscicd'
+        IMAGE = "${REGISTRY}/${REPO_OWNER}/${REPO_NAME}"
         VERSION = 'build-${env.BUILD_NUMBER}'
     }
 
