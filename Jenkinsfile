@@ -1,33 +1,40 @@
-pipeline {
-  agent any
-
-  stages {
-    stage('Checkout') {
-      steps {
-        echo "Clone repo"
-        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: '6ecd416d-1e7a-4888-ba66-45c2779f5f7d', url: 'https://github.com/HugoGapaillart/CoursCicd.git']])
-      }
+pipeline { 
+    agent any
+    
+    tools { 
+        nodejs 'node'
     }
 
-    stage('Build') {
-      steps {
-        echo 'Build project'
-        nodejs('node25') {
-          sh '''
-            npm i
-            npm run build
-          '''
+    environment {
+        IMAGE = 'ghcr.io/hugogapaillart/courscicd'
+        VERSION = '1.0.${BUILD_ID}'
+    }
+
+    stages { 
+        stage('Checkout') { 
+            steps { 
+                echo "Clone repo" 
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'gitToken', url: 'https://github.com/HugoGapaillart/CoursCicd']])
+            } 
+        } 
+        stage('Build') { 
+            steps { 
+                echo 'Build project' 
+                sh ''' npm install 
+                npm run build ''' 
+            } 
+        } 
+        stage('Tests') { 
+            steps { 
+                echo 'Test' 
+                sh 'npm test'
+            } 
+        } 
+        stage('Build Docker Image') {
+            steps { 
+              echo "Build Docker image"
+              sh 'docker build -t ${IMAGE}:${VERSION} .'
+            }
         }
-      }
     }
-
-    stage('Tests') {
-      steps {
-        echo 'Test'
-        nodejs('node25') {
-          sh 'npm test'
-        }
-      }
-    }
-  } 
 }
