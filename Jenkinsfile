@@ -9,8 +9,8 @@ pipeline {
         REGISTRY = 'ghcr.io'
         REPO_OWNER = 'hugogapaillart'
         REPO_NAME = 'courscicd'
-        IMAGE = "${REGISTRY}/${REPO_OWNER}/${REPO_NAME}"
-        VERSION = 'build-${env.BUILD_NUMBER}'
+        IMAGE = "x${REGISTRY}/${REPO_OWNER}/${REPO_NAME}"
+        VERSION = "build-${env.BUILD_NUMBER}"
     }
 
     stages { 
@@ -36,7 +36,7 @@ pipeline {
         stage('Build Docker Image') {
             steps { 
               echo "Build Docker image"
-              sh 'docker build -t ${IMAGE}:${VERSION} .'
+              sh "docker build -t ${IMAGE}:${VERSION} ."
             }
         }
     }
