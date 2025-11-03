@@ -14,28 +14,32 @@ pipeline {
     stage('Checkout') {
       steps {
         echo "Clone repo"
-        git branch: 'main', url: "https://github.com/${GITHUB_USER}/${GITHUB_REPO}.git"
+        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: '6ecd416d-1e7a-4888-ba66-45c2779f5f7d', url: 'https://github.com/HugoGapaillart/CoursCicd.git']])
       }
     }
 
     stage('Build') {
       steps {
         echo 'Build project'
-        sh '''
-          npm install
-          npm run build
-        '''
+        nodejs('node25') {
+          sh '''
+            npm i
+            npm run build
+          '''
+        }
       }
     }
 
     stage('Tests') {
       steps {
         echo 'Test'
-        sh 'npm test'
+        nodejs('node25') {
+          sh 'npm test'
+        }
       }
     }
 
-    stage('Build Docker Image') {
+    /* stage('Build Docker Image') {
       steps {
         script {
           echo "Build image Docker ${REGISTRY}:${BUILD_VERSION}..."
@@ -66,8 +70,8 @@ pipeline {
           git push https://${GITHUB_TOKEN}@github.com/${GITHUB_USER}/${GITHUB_REPO}.git ${BUILD_VERSION}
         '''
       }
-    }
-  }
+    }*/
+  } 
 
   post {
     success {
