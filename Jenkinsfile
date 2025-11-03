@@ -9,7 +9,7 @@ pipeline {
         REGISTRY = 'ghcr.io'
         REPO_OWNER = 'hugogapaillart'
         REPO_NAME = 'courscicd'
-        IMAGE = "x${REGISTRY}/${REPO_OWNER}/${REPO_NAME}"
+        IMAGE = "${REGISTRY}/${REPO_OWNER}/${REPO_NAME}"
         VERSION = "build-${env.BUILD_NUMBER}"
     }
 
@@ -39,5 +39,18 @@ pipeline {
               sh "docker build -t ${IMAGE}:${VERSION} ."
             }
         }
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'ghcr-token', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
+                    sh """
+                        echo $GH_TOKEN | docker login ghcr.io -u $GH_USER --password-stdin
+                        docker push ${IMAGE}:${VERSION}
+                    """
+                }
+            }
+        }
+    }
+}
+
     }
 }
