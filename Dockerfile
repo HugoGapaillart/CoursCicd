@@ -1,4 +1,4 @@
-# Étape 1 : Build React
+# Étape unique : Build React
 FROM node:18 AS build
 WORKDIR /app
 COPY package*.json ./
@@ -6,8 +6,5 @@ RUN npm install
 COPY . .
 RUN npm run build
 
-# Étape 2 : Nginx
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Garder seulement le build pour pipeline CI/CD
+CMD ["echo", "React build ready in /app/build"]
