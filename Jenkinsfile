@@ -35,8 +35,8 @@ pipeline {
         } 
         stage('Build Docker Image') {
             steps { 
-              echo "Build Docker image"
-              sh "docker build -t ${IMAGE}:${VERSION} ."
+                echo "Build Docker image"
+                sh "docker build -t ${IMAGE}:${VERSION} ."
             }
         }
         stage('Push Docker Image') {
@@ -45,6 +45,18 @@ pipeline {
                     sh """
                         echo $GH_TOKEN | docker login ghcr.io -u $GH_USER --password-stdin
                         docker push ${IMAGE}:${VERSION}
+                    """
+                }
+            }
+        }
+        stage('Tag Git Repository') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'gitToken', usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
+                    sh """
+                        git config user.name "Hugo Gapaillart"
+                        git config user.email "hugogap56@gmail.com"
+                        git tag -a ${VERSION} -m "Build ${VERSION}"
+                        git push https://${GH_USER}:${GH_TOKEN}@github.com/HugoGapaillart/CoursCicd.git ${VERSION}
                     """
                 }
             }
